@@ -9,6 +9,32 @@ import java.net.InetAddress;
 import mirao52.Mirao52Exception;
 import mirao52.Mirao52Interface;
 
+/**
+ * Class Mirao52UDPClient
+ * 
+ * Instances of this class can connect o a UDP server providing control to the
+ * MIRAO52e deformable mirror
+ *
+ * @author Loic Royer 2014
+ *
+ */
+/**
+ * Class Mirao52UDPClient 
+ * 
+ * Instances of this class ...
+ *
+ * @author Loic Royer
+ * 2014
+ *
+ */
+/**
+ * Class Mirao52UDPClient
+ * 
+ * Instances of this class ...
+ *
+ * @author Loic Royer 2014
+ *
+ */
 public class Mirao52UDPClient implements Mirao52Interface, Closeable
 {
 	private static final String cMirao52UDPPrefix = "MIRAO52E";
@@ -23,16 +49,24 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 	private double[] mRawMirrorShapeVectors;
 	private volatile long mLastNumberOfShapesReceived;
 
+	/**
+	 * Constructs an instance of the Mirao52UDPClient class
+	 */
 	public Mirao52UDPClient()
 	{
 		super();
 	}
 
-	/* (non-Javadoc)
-	 * @see mirao52.udp.Mirao52Interface#connect(java.lang.String)
+	/**
+	 * Opens the connection to the UDP server on a given machine. After the
+	 * connection is established, miror shapes can be sent.
+	 * 
+	 * @param pHostname
+	 *          hostname of machine on which the UDP server is running.
+	 * @throws IOException
+	 *           if the connection cannot be established.
 	 */
-	@Override
-	public void connect(String pHostname) throws IOException
+	public void open(String pHostname) throws IOException
 	{
 		InetAddress lInetAddress = InetAddress.getByName(pHostname);
 		mDatagramSocket = new DatagramSocket();
@@ -48,8 +82,11 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 		sendFlatMirrorShapeVector();
 	}
 
-	/* (non-Javadoc)
-	 * @see mirao52.udp.Mirao52Interface#close()
+	/**
+	 * Disconnects from server. After this point mirror shapes cannot be sent
+	 * anymore.
+	 * 
+	 * @throws IOException
 	 */
 	@Override
 	public void close() throws IOException
@@ -57,18 +94,25 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 		mDatagramSocket.close();
 	}
 
+	/**
+	 * Interface method implementation
+	 * 
+	 * @see mirao52.Mirao52Interface#getNumberOfReceivedShapes()
+	 */
 	@Override
-	public long getLastNumberOfReceivedShapes()
+	public long getNumberOfReceivedShapes()
 	{
 		return mLastNumberOfShapesReceived;
 	}
 
 
-	/* (non-Javadoc)
-	 * @see mirao52.udp.Mirao52Interface#sendSquareMirrorShapeVector(double[])
+	/**
+	 * Interface method implementation
+	 * 
+	 * @see mirao52.Mirao52Interface#sendMatrixMirrorShapeVector(double[])
 	 */
 	@Override
-	public boolean sendSquareMirrorShapeVector(double[] pSquareMirrorShapeVector) throws IOException
+	public boolean sendMatrixMirrorShapeVector(double[] pSquareMirrorShapeVector)
 	{
 		checkVectorDimensions(pSquareMirrorShapeVector,
 													cMirao52SquareMirrorShapeVectorLength);
@@ -76,11 +120,13 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 		return sendRawMirrorShapeVector(lRawMirrorShapeVector);
 	}
 
-	/* (non-Javadoc)
-	 * @see mirao52.udp.Mirao52Interface#sendSquareMirrorShapeVector(double[])
+	/**
+	 * Interface method implementation
+	 * 
+	 * @see mirao52.Mirao52Interface#sendFlatMirrorShapeVector()
 	 */
 	@Override
-	public boolean sendFlatMirrorShapeVector() throws IOException
+	public boolean sendFlatMirrorShapeVector()
 	{
 		return sendRawMirrorShapeVector(new double[cMirao52NumberOfActuators]);
 	}
@@ -120,45 +166,65 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 		return mRawMirrorShapeVectors;
 	}
 
-	/* (non-Javadoc)
-	 * @see mirao52.udp.Mirao52Interface#sendRawMirrorShapeVector(double[])
+	/**
+	 * Interface method implementation
+	 * 
+	 * @see mirao52.Mirao52Interface#sendRawMirrorShapeVector(double[])
 	 */
 	@Override
-	public boolean sendRawMirrorShapeVector(double[] pRawMirrorShapeVector) throws IOException
+	public boolean sendRawMirrorShapeVector(double[] pRawMirrorShapeVector)
 	{
 		synchronized (mLock)
 		{
-			checkVectorDimensions(pRawMirrorShapeVector,
-														cMirao52NumberOfActuators);
+			try
+			{
+				checkVectorDimensions(pRawMirrorShapeVector,
+															cMirao52NumberOfActuators);
 
-			byte[] lByteBuffer = convertDoubleArrayToByteArray(	cMirao52UDPPrefix.getBytes(),
-																													pRawMirrorShapeVector);
-			mDatagramPacket.setData(lByteBuffer);
-			mDatagramSocket.send(mDatagramPacket);
+				byte[] lByteBuffer = convertDoubleArrayToByteArray(	cMirao52UDPPrefix.getBytes(),
+																														pRawMirrorShapeVector);
+				mDatagramPacket.setData(lByteBuffer);
+				mDatagramSocket.send(mDatagramPacket);
 
-			byte[] lReceiveBuffer = new byte[9];
+				byte[] lReceiveBuffer = new byte[9];
 
-			DatagramPacket lDatagramPacket = new DatagramPacket(lReceiveBuffer,
-																													lReceiveBuffer.length);
+				DatagramPacket lDatagramPacket = new DatagramPacket(lReceiveBuffer,
+																														lReceiveBuffer.length);
 
-			mDatagramSocket.receive(lDatagramPacket);
+				mDatagramSocket.receive(lDatagramPacket);
 
-			mLastNumberOfShapesReceived = convertBytesToLong(lReceiveBuffer,
-																														0);
-			boolean lSuccess = lReceiveBuffer[8] != 0;
+				mLastNumberOfShapesReceived = convertBytesToLong(lReceiveBuffer,
+																															0);
+				boolean lSuccess = lReceiveBuffer[8] != 0;
 
-			System.out.println("lLastNumberOfShapesReceived=" + mLastNumberOfShapesReceived);
-			System.out.println("lSuccess=" + lSuccess);
-			
-			return lSuccess;
+				System.out.println("lLastNumberOfShapesReceived=" + mLastNumberOfShapesReceived);
+				System.out.println("lSuccess=" + lSuccess);
+				
+				return lSuccess;
+			}
+			catch (IOException e)
+			{
+				throw new Mirao52Exception(	"Excepion while sending mirror shape: '" + e.getLocalizedMessage()
+																				+ "'",
+																		e);
+			}
 		}
 	}
 
+	/**
+	 * Converts an array of doubles into a array of bytes plus a prefix
+	 * 
+	 * @param pPrefix
+	 *          bytes to prepend
+	 * @param pDoubleArray
+	 *          array of doubles to convert
+	 * @return
+	 */
 	private byte[] convertDoubleArrayToByteArray(	byte[] pPrefix,
-																								double[] pRawMirrorShapeVector)
+																								double[] pDoubleArray)
 	{
 
-		int lVectorLength = pRawMirrorShapeVector.length;
+		int lVectorLength = pDoubleArray.length;
 		int lByteArrayLength = pPrefix.length + lVectorLength * 8;
 		if (mByteArray == null || mByteArray.length != lByteArrayLength)
 			mByteArray = new byte[lByteArrayLength];
@@ -167,7 +233,7 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 			mByteArray[j] = pPrefix[j];
 		for (int i = 0, j = pPrefix.length; i < lVectorLength; i++)
 		{
-			long lDoubleAsLong = Double.doubleToLongBits(pRawMirrorShapeVector[i]);
+			long lDoubleAsLong = Double.doubleToLongBits(pDoubleArray[i]);
 			mByteArray[j++] = (byte) (lDoubleAsLong >>> 56);
 			mByteArray[j++] = (byte) (lDoubleAsLong >>> 48);
 			mByteArray[j++] = (byte) (lDoubleAsLong >>> 40);
@@ -180,25 +246,42 @@ public class Mirao52UDPClient implements Mirao52Interface, Closeable
 		return mByteArray;
 	}
 
-	private long convertBytesToLong(byte[] pReceiveBuffer, int pOffset)
+	/**
+	 * Converts an array of bytes starting from some offset into a long
+	 * 
+	 * @param pByteArray
+	 *          byte array
+	 * @param pOffset
+	 *          ofset into byte array
+	 * @return corresponding long
+	 */
+	private long convertBytesToLong(byte[] pByteArray, int pOffset)
 	{
 
-		return (long) (pReceiveBuffer[pOffset + 7] & 0xFF << 0 * 8
-										| (pReceiveBuffer[pOffset + 6] & 0xFF) << 1 * 8
-										| (pReceiveBuffer[pOffset + 5] & 0xFF) << 2 * 8
-										| (pReceiveBuffer[pOffset + 4] & 0xFF) << 3 * 8
-										| (pReceiveBuffer[pOffset + 3] & 0xFF) << 4 * 8
-										| (pReceiveBuffer[pOffset + 2] & 0xFF) << 5 * 8
-										| (pReceiveBuffer[pOffset + 1] & 0xFF) << 6 * 8 | (pReceiveBuffer[pOffset + 0] & 0xFF) << 7 * 8);
+		return (long) (pByteArray[pOffset + 7] & 0xFF << 0 * 8
+										| (pByteArray[pOffset + 6] & 0xFF) << 1 * 8
+										| (pByteArray[pOffset + 5] & 0xFF) << 2 * 8
+										| (pByteArray[pOffset + 4] & 0xFF) << 3 * 8
+										| (pByteArray[pOffset + 3] & 0xFF) << 4 * 8
+										| (pByteArray[pOffset + 2] & 0xFF) << 5 * 8
+										| (pByteArray[pOffset + 1] & 0xFF) << 6 * 8 | (pByteArray[pOffset + 0] & 0xFF) << 7 * 8);
 	}
 
-	private void checkVectorDimensions(	double[] pRawMirrorShapeVector,
+	/**
+	 * Checks vector dimensions and throw an exception if the length is incorrect.
+	 * 
+	 * @param pVector
+	 *          vector to check for correct length
+	 * @param pExpectedVectorLength
+	 *          expected corect length
+	 */
+	private void checkVectorDimensions(	double[] pVector,
 																			int pExpectedVectorLength)
 	{
-		if (pRawMirrorShapeVector.length != pExpectedVectorLength)
+		if (pVector.length != pExpectedVectorLength)
 		{
 			String lExceptionMessage = String.format(	"Provided vector has wrong length %d should be %d",
-																								pRawMirrorShapeVector.length,
+																								pVector.length,
 																								pExpectedVectorLength);
 			throw new Mirao52Exception(lExceptionMessage);
 		}

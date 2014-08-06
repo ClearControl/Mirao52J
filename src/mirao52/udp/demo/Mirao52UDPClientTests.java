@@ -12,33 +12,47 @@ import org.junit.Test;
 public class Mirao52UDPClientTests
 {
 
+	/**
+	 * Start the Mirao52 UDP server on the localhost and fire this demo.
+	 * 
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	@Test
 	public void test() throws IOException, InterruptedException
 	{
 		Mirao52UDPClient lMirao52UDPClient = new Mirao52UDPClient();
 
-		lMirao52UDPClient.connect("localhost");
+		lMirao52UDPClient.open("localhost");
 
-		long lStartValueForLastNumberOfShapes = lMirao52UDPClient.getLastNumberOfReceivedShapes();
+		long lStartValueForLastNumberOfShapes = lMirao52UDPClient.getNumberOfReceivedShapes();
 
 		for (int i = 1; i <= 10000; i++)
 		{
 			double[] lSquareMirrorShapeVector = generateRandomVector(64);
-			assertTrue(lMirao52UDPClient.sendSquareMirrorShapeVector(lSquareMirrorShapeVector));
+			assertTrue(lMirao52UDPClient.sendMatrixMirrorShapeVector(lSquareMirrorShapeVector));
 			assertEquals(	lStartValueForLastNumberOfShapes + i,
-										lMirao52UDPClient.getLastNumberOfReceivedShapes());
+										lMirao52UDPClient.getNumberOfReceivedShapes());
 			Thread.sleep(100);
 		}
 
 	}
 
+	/**
+	 * generates a random shape vector
+	 * 
+	 * @param pLength
+	 * @return
+	 */
 	private double[] generateRandomVector(int pLength)
 	{
 		double[] lRawMirrorShapeVector = new double[pLength];
 
-		final double lOffset = 0.005 * (2 * Math.random() - 1);
+		final double lOffset = 0.00 * (2 * Math.random() - 1);
 		for (int i = 0; i < lRawMirrorShapeVector.length; i++)
-			lRawMirrorShapeVector[i] = lOffset;
+			lRawMirrorShapeVector[i] = lOffset + 0.01
+																	* (2 * Math.random() - 1);
+		;
 		return lRawMirrorShapeVector;
 	}
 
