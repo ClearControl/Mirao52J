@@ -1,0 +1,12 @@
+-library mirao52e
+-beautifyNames
+-f
+-o src\
+-rootPackage src
+-package mirao52.bindings
+-arch win64 
+-libFile lib\mirao52e\mirao52e.lib
+-runtime BridJ
+-mode Directory
+-jar dcam.jar
+lib\mirao52e\mirao52e.h
