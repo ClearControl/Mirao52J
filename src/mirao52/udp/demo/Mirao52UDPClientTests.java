@@ -30,7 +30,7 @@ public class Mirao52UDPClientTests
 		for (int i = 1; i <= 10000; i++)
 		{
 			double[] lSquareMirrorShapeVector = generateRandomVector(64);
-			assertTrue(lMirao52UDPClient.sendMatrixMirrorShapeVector(lSquareMirrorShapeVector));
+			assertTrue(lMirao52UDPClient.sendFullMatrixMirrorShapeVector(lSquareMirrorShapeVector));
 			assertEquals(	lStartValueForLastNumberOfShapes + i,
 										lMirao52UDPClient.getNumberOfReceivedShapes());
 			Thread.sleep(100);

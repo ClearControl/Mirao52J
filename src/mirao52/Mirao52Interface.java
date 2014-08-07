@@ -1,6 +1,7 @@
 package mirao52;
 
 import java.io.IOException;
+import java.nio.DoubleBuffer;
 
 /**
  * Interface Mirao52Interface
@@ -62,7 +63,18 @@ public interface Mirao52Interface
 	 * 
 	 * @return true if succeeded.
 	 */
-	public abstract boolean sendMatrixMirrorShapeVector(double[] pSquareMirrorShapeVector);
+	public abstract boolean sendFullMatrixMirrorShapeVector(double[] pFullMatrixMirrorShapeVector);
+
+	/**
+	 * Sends a 'full-matrix' mirror shape vector. This vector corresponds to a
+	 * full 8x8 matrix. Corner actuator positions for which there is no actuator
+	 * are simply ignored. This makes it easier to manipulate the mirror surface
+	 * as a 2D image.
+	 * 
+	 * 
+	 * @return true if succeeded.
+	 */
+	public abstract boolean sendFullMatrixMirrorShapeVector(DoubleBuffer pFullMatrixMirrorShapeVector);
 
 	/**
 	 * Sends a raw mirror shape vector. This vector values corresponds to each and
@@ -72,6 +84,16 @@ public interface Mirao52Interface
 	 * @return true if succeeded.
 	 */
 	public abstract boolean sendRawMirrorShapeVector(double[] pRawMirrorShapeVector);
+
+	/**
+	 * Sends a raw mirror shape vector. This vector values corresponds to each and
+	 * every actuator on the mirror.
+	 * 
+	 * 
+	 * @return true if succeeded.
+	 */
+	public abstract boolean sendRawMirrorShapeVector(DoubleBuffer pRawMirrorShapeVector);
+
 
 	/**
 	 * @return number of mirror shapes received
