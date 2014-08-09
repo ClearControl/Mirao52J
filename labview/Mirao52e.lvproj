@@ -20,7 +20,6 @@
 		<Property Name="specify.custom.address" Type="Bool">false</Property>
 		<Item Name="Mirao52e.ico" Type="Document" URL="../Mirao52e.ico"/>
 		<Item Name="Mirao52e.vi" Type="VI" URL="../Mirao52e.vi"/>
-		<Item Name="Stop.vi" Type="VI" URL="../Stop.vi"/>
 		<Item Name="TestMirao52e.vi" Type="VI" URL="../TestMirao52e.vi"/>
 		<Item Name="Dependencies" Type="Dependencies">
 			<Item Name="vi.lib" Type="Folder">
