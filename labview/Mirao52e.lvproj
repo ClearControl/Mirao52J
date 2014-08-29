@@ -58,6 +58,7 @@
 			<Item Name="mro_close.vi" Type="VI" URL="../mro_close.vi"/>
 			<Item Name="mro_open.vi" Type="VI" URL="../mro_open.vi"/>
 			<Item Name="mro_read_flat.vi" Type="VI" URL="../mro_read_flat.vi"/>
+			<Item Name="mro_write_cmd.vi" Type="VI" URL="../mro_write_cmd.vi"/>
 			<Item Name="no timeout error.vi" Type="VI" URL="../no timeout error.vi"/>
 		</Item>
 		<Item Name="Build Specifications" Type="Build">
