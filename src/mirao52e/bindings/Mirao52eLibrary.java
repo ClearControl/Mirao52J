@@ -1,4 +1,4 @@
-package mirao52.bindings;
+package mirao52e.bindings;
 import org.bridj.BridJ;
 import org.bridj.CRuntime;
 import org.bridj.Callback;

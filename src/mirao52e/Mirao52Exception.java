@@ -1,7 +1,7 @@
-package mirao52;
+package mirao52e;
 
 /**
- * Class Mirao52Exception
+ * Exception Mirao52Exception
  * 
  * Instances of this exception are thrown when there is a problem with the
  * MIRAO52e deformable mirror.
