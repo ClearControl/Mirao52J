@@ -83,6 +83,24 @@ public class Mirao52eDeformableMirror implements Closeable
 				return false;
 			}
 			mIsOpen = true;
+
+			if (mIsOpen)
+				Runtime.getRuntime().addShutdownHook(new Thread()
+				{
+					@Override
+					public void run()
+					{
+						try
+						{
+							close();
+						}
+						catch (Throwable e)
+						{
+							e.printStackTrace();
+						}
+					}
+				});
+
 			return true;
 		}
 	}
