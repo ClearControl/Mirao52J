@@ -2,7 +2,6 @@ package mirao52e;
 
 import static org.junit.Assert.fail;
 
-import java.io.Closeable;
 import java.io.IOException;
 
 import mirao52e.bindings.Mirao52eLibrary;
@@ -19,7 +18,7 @@ import org.bridj.Pointer;
  *
  */
 
-public class Mirao52eDeformableMirror implements Closeable
+public class Mirao52eDeformableMirror implements AutoCloseable
 {
 	private Object mLock = new Object();
 
