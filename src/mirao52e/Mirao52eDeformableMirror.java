@@ -2,7 +2,11 @@ package mirao52e;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
 
 import mirao52e.bindings.Mirao52eLibrary;
 
@@ -28,12 +32,31 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 
 	private volatile boolean mIsOpen = false;
 
+	private double[] mFlatCalibrationRawMatrix;
+
 	/**
 	 * Constructs an instance of the Mirao52eDeformableMirror class
 	 */
 	public Mirao52eDeformableMirror()
 	{
 		super();
+	}
+
+	public void loadFlatCalibrationMatrix(File pFile) throws FileNotFoundException
+	{
+		mFlatCalibrationRawMatrix = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
+
+		Scanner lScanner = new Scanner(pFile);
+
+		int i = 0;
+		while (lScanner.hasNextDouble())
+		{
+			mFlatCalibrationRawMatrix[i++] = lScanner.nextDouble();
+		}
+
+		System.out.println("mFlatCalibrationRawMatrix=" + Arrays.toString(mFlatCalibrationRawMatrix));
+
+		lScanner.close();
 	}
 
 	/**
@@ -161,11 +184,26 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	 */
 	public boolean sendFullMatrixMirrorShapeVector(double[] pFullMatrixMirrorShapeVector)
 	{
-		Pointer<Double> lPointerToDoubles = Pointer.pointerToDoubles(pFullMatrixMirrorShapeVector);
-		Pointer<Double> lRawMirrorShapeVectorDoubleBuffer = removeNonExistantCornerActuators(lPointerToDoubles);
-		boolean lReturnValue = sendRawMirrorShapeVector(lRawMirrorShapeVectorDoubleBuffer);
-		lPointerToDoubles.release();
-		return lReturnValue;
+		double[] lRawMirrorShapeDoubleArray = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
+
+		Mirao52eSpecifications.convertLayout(	pFullMatrixMirrorShapeVector,
+																					lRawMirrorShapeDoubleArray);
+
+		return sendRawMirrorShapeVector(lRawMirrorShapeDoubleArray);
+	}
+
+	/**
+	 * Sends a raw mirror shape vector. This vector values corresponds to each and
+	 * every actuator on the mirror.
+	 * 
+	 * 
+	 * @return true if succeeded.
+	 */
+	public boolean sendRawMirrorShapeVector(double[] pRawMirrorShapeVector)
+	{
+		Pointer<Double> lPointerToDoubles = Pointer.pointerToDoubles(addFlatCalibration(pRawMirrorShapeVector));
+		boolean lResultValue = sendRawMirrorShapeVector(lPointerToDoubles);
+		return lResultValue;
 	}
 
 	/**
@@ -185,20 +223,6 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 													Mirao52eSpecifications.cMirao52FullMatrixMirrorShapeVectorLength);
 		Pointer<Double> lRawMirrorShapeVectorDoubleBuffer = removeNonExistantCornerActuators(pFullMatrixMirrorShapeVectorDoubleBuffer);
 		return sendRawMirrorShapeVector(lRawMirrorShapeVectorDoubleBuffer);
-	}
-
-	/**
-	 * Sends a raw mirror shape vector. This vector values corresponds to each and
-	 * every actuator on the mirror.
-	 * 
-	 * 
-	 * @return true if succeeded.
-	 */
-	public boolean sendRawMirrorShapeVector(double[] pRawMirrorShapeVector)
-	{
-		Pointer<Double> lPointerToDoubles = Pointer.pointerToDoubles(pRawMirrorShapeVector);
-		boolean lResultValue = sendRawMirrorShapeVector(lPointerToDoubles);
-		return lResultValue;
 	}
 
 	/**
@@ -264,6 +288,16 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 																								pExpectedVectorLength);
 			throw new Mirao52Exception(lExceptionMessage);
 		}
+
+	}
+
+	private double[] addFlatCalibration(double[] pRawMatrixMirrorShapeVector)
+	{
+		double[] lRawMatrixMirrorShapeVectorWithOffset = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
+		if (mFlatCalibrationRawMatrix != null)
+			for (int i = 0; i < Mirao52eSpecifications.cMirao52NumberOfActuators; i++)
+				lRawMatrixMirrorShapeVectorWithOffset[i] = pRawMatrixMirrorShapeVector[i] + mFlatCalibrationRawMatrix[i];
+		return lRawMatrixMirrorShapeVectorWithOffset;
 	}
 
 }

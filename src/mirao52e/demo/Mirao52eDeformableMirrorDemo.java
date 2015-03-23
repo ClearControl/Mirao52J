@@ -49,7 +49,7 @@ public class Mirao52eDeformableMirrorDemo
 
 		final double lOffset = 0.01 * (2 * Math.random() - 1);
 		for (int i = 0; i < lRawMirrorShapeVector.length; i++)
-			lRawMirrorShapeVector[i] = lOffset + 0.01
+			lRawMirrorShapeVector[i] = lOffset + 0.1
 																	* (Math.random() - 0.5);
 		return lRawMirrorShapeVector;
 	}
