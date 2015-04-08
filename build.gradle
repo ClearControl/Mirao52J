@@ -94,7 +94,7 @@ if (JavaVersion.current().isJava8Compatible()) {
  
  
  group = 'net.rtlib'
- version = '1.0'
+ version = '1.0.1'
  
  artifacts
  {
