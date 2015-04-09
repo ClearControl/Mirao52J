@@ -101,7 +101,8 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 			lPointerToStatus.release();
 			if (lMroOpen == Mirao52eLibrary.MRO_FALSE)
 			{
-				System.err.println("Could not open status=" + lStatusByte);
+				System.err.println(Mirao52eDeformableMirror.class.getSimpleName() + ": Could not open status="
+														+ lStatusByte);
 				return false;
 			}
 			mIsOpen = true;
@@ -154,7 +155,8 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 
 			if (lMroClose == Mirao52eLibrary.MRO_FALSE)
 			{
-				System.err.println("Could not close status=" + lStatusByte);
+				System.err.println(Mirao52eDeformableMirror.class.getSimpleName() + ": Could not close status="
+														+ lStatusByte);
 				fail();
 			}
 		}
