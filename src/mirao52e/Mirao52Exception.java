@@ -18,6 +18,7 @@ public class Mirao52Exception extends RuntimeException
 	 * Constructs an instance of Mirao52Exception class given an error message.
 	 * 
 	 * @param pExceptionMessage
+	 *          exception message
 	 */
 	public Mirao52Exception(String pExceptionMessage)
 	{
@@ -29,7 +30,9 @@ public class Mirao52Exception extends RuntimeException
 	 * and a cause.
 	 * 
 	 * @param pExceptionMessage
+	 *          exception message
 	 * @param pException
+	 *          causative exception
 	 */
 	public Mirao52Exception(String pExceptionMessage,
 													Throwable pException)
