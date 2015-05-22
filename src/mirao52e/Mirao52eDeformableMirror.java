@@ -24,7 +24,7 @@ import org.bridj.Pointer;
 
 public class Mirao52eDeformableMirror implements AutoCloseable
 {
-	private Object mLock = new Object();
+	private final Object mLock = new Object();
 
 	private Pointer<Double> mRawMirrorShapeVector;
 
@@ -46,7 +46,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	{
 		mFlatCalibrationRawMatrix = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
 
-		Scanner lScanner = new Scanner(pFile);
+		final Scanner lScanner = new Scanner(pFile);
 
 		int i = 0;
 		while (lScanner.hasNextDouble())
@@ -95,9 +95,9 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 			return true;
 		synchronized (mLock)
 		{
-			Pointer<Integer> lPointerToStatus = Pointer.allocateInt();
-			byte lMroOpen = Mirao52eLibrary.mroOpen(lPointerToStatus);
-			byte lStatusByte = lPointerToStatus.getByte();
+			final Pointer<Integer> lPointerToStatus = Pointer.allocateInt();
+			final byte lMroOpen = Mirao52eLibrary.mroOpen(lPointerToStatus);
+			final byte lStatusByte = lPointerToStatus.getByte();
 			lPointerToStatus.release();
 			if (lMroOpen == Mirao52eLibrary.MRO_FALSE)
 			{
@@ -117,7 +117,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 						{
 							close();
 						}
-						catch (Throwable e)
+						catch (final Throwable e)
 						{
 							e.printStackTrace();
 						}
@@ -140,6 +140,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	 * Disconnects from the driver
 	 * 
 	 * @throws IOException
+	 *           exception
 	 */
 	@Override
 	public void close() throws IOException
@@ -148,9 +149,9 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 			return;
 		synchronized (mLock)
 		{
-			Pointer<Integer> lPointerToStatus = Pointer.allocateInt();
-			byte lMroClose = Mirao52eLibrary.mroClose(lPointerToStatus);
-			byte lStatusByte = lPointerToStatus.getByte();
+			final Pointer<Integer> lPointerToStatus = Pointer.allocateInt();
+			final byte lMroClose = Mirao52eLibrary.mroClose(lPointerToStatus);
+			final byte lStatusByte = lPointerToStatus.getByte();
 			lPointerToStatus.release();
 
 			if (lMroClose == Mirao52eLibrary.MRO_FALSE)
@@ -166,8 +167,6 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	 * Sends a flat mirror shape vector (0, ... , 0).
 	 * 
 	 * @return true if succeeded (Mirror accepts shape).
-	 * @throws IOException
-	 *           if shape could not be sent because of a connection issue
 	 */
 	public boolean sendFlatMirrorShapeVector()
 	{
@@ -186,7 +185,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	 */
 	public boolean sendFullMatrixMirrorShapeVector(double[] pFullMatrixMirrorShapeVector)
 	{
-		double[] lRawMirrorShapeDoubleArray = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
+		final double[] lRawMirrorShapeDoubleArray = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
 
 		Mirao52eSpecifications.convertLayout(	pFullMatrixMirrorShapeVector,
 																					lRawMirrorShapeDoubleArray);
@@ -198,13 +197,14 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	 * Sends a raw mirror shape vector. This vector values corresponds to each and
 	 * every actuator on the mirror.
 	 * 
-	 * 
+	 * @param pRawMirrorShapeVector
+	 *          raw mirror shape
 	 * @return true if succeeded.
 	 */
 	public boolean sendRawMirrorShapeVector(double[] pRawMirrorShapeVector)
 	{
-		Pointer<Double> lPointerToDoubles = Pointer.pointerToDoubles(addFlatCalibration(pRawMirrorShapeVector));
-		boolean lResultValue = sendRawMirrorShapeVector(lPointerToDoubles);
+		final Pointer<Double> lPointerToDoubles = Pointer.pointerToDoubles(addFlatCalibration(pRawMirrorShapeVector));
+		final boolean lResultValue = sendRawMirrorShapeVector(lPointerToDoubles);
 		return lResultValue;
 	}
 
@@ -223,7 +223,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	{
 		checkVectorDimensions(pFullMatrixMirrorShapeVectorDoubleBuffer,
 													Mirao52eSpecifications.cMirao52FullMatrixMirrorShapeVectorLength);
-		Pointer<Double> lRawMirrorShapeVectorDoubleBuffer = removeNonExistantCornerActuators(pFullMatrixMirrorShapeVectorDoubleBuffer);
+		final Pointer<Double> lRawMirrorShapeVectorDoubleBuffer = removeNonExistantCornerActuators(pFullMatrixMirrorShapeVectorDoubleBuffer);
 		return sendRawMirrorShapeVector(lRawMirrorShapeVectorDoubleBuffer);
 	}
 
@@ -231,7 +231,8 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	 * Sends a raw mirror shape vector. This vector values corresponds to each and
 	 * every actuator on the mirror.
 	 * 
-	 * 
+	 * @param pRawMirrorShapeVectorDoubleBuffer
+	 *          raw mirror shape as buffer of doubles
 	 * @return true if succeeded.
 	 */
 	public boolean sendRawMirrorShapeVector(Pointer<Double> pRawMirrorShapeVectorDoubleBuffer)
@@ -243,15 +244,15 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 				checkVectorDimensions(pRawMirrorShapeVectorDoubleBuffer,
 															Mirao52eSpecifications.cMirao52NumberOfActuators);
 
-				byte lMroApplyCommand = Mirao52eLibrary.mroApplyCommand(pRawMirrorShapeVectorDoubleBuffer,
+				final byte lMroApplyCommand = Mirao52eLibrary.mroApplyCommand(pRawMirrorShapeVectorDoubleBuffer,
 																																(byte) (mOutputTrigger ? Mirao52eLibrary.MRO_TRUE
 																																											: Mirao52eLibrary.MRO_FALSE),
 																																null);
 
-				boolean lSuccess = lMroApplyCommand == Mirao52eLibrary.MRO_TRUE;
+				final boolean lSuccess = lMroApplyCommand == Mirao52eLibrary.MRO_TRUE;
 				return lSuccess;
 			}
-			catch (Throwable e)
+			catch (final Throwable e)
 			{
 				throw new Mirao52Exception(	"Excepion while sending mirror shape: '" + e.getLocalizedMessage()
 																				+ "'",
@@ -285,7 +286,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 	{
 		if (pVector.getValidElements() != pExpectedVectorLength)
 		{
-			String lExceptionMessage = String.format(	"Provided vector has wrong length %d should be %d",
+			final String lExceptionMessage = String.format(	"Provided vector has wrong length %d should be %d",
 																								pVector.getValidElements(),
 																								pExpectedVectorLength);
 			throw new Mirao52Exception(lExceptionMessage);
@@ -295,7 +296,7 @@ public class Mirao52eDeformableMirror implements AutoCloseable
 
 	private double[] addFlatCalibration(double[] pRawMatrixMirrorShapeVector)
 	{
-		double[] lRawMatrixMirrorShapeVectorWithOffset = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
+		final double[] lRawMatrixMirrorShapeVectorWithOffset = new double[Mirao52eSpecifications.cMirao52NumberOfActuators];
 		if (mFlatCalibrationRawMatrix != null)
 			for (int i = 0; i < Mirao52eSpecifications.cMirao52NumberOfActuators; i++)
 				lRawMatrixMirrorShapeVectorWithOffset[i] = pRawMatrixMirrorShapeVector[i] + mFlatCalibrationRawMatrix[i];

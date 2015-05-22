@@ -15,19 +15,21 @@ public class Mirao52eDeformableMirrorDemo
 	 * Start the Mirao52 UDP server on the localhost and fire this demo.
 	 * 
 	 * @throws IOException
+	 *           exception
 	 * @throws InterruptedException
+	 *           exception
 	 */
 	@Test
 	public void demo() throws IOException, InterruptedException
 	{
-		Mirao52eDeformableMirror lMirao52eDeformableMirror = new Mirao52eDeformableMirror();
+		final Mirao52eDeformableMirror lMirao52eDeformableMirror = new Mirao52eDeformableMirror();
 
 		lMirao52eDeformableMirror.open();
 
 		for (int i = 1; i <= 100; i++)
 		{
 			System.out.println("sending shape i=" + i);
-			double[] lSquareMirrorShapeVector = generateRandomVector(64);
+			final double[] lSquareMirrorShapeVector = generateRandomVector(64);
 			assertTrue(lMirao52eDeformableMirror.sendFullMatrixMirrorShapeVector(lSquareMirrorShapeVector));
 
 			Thread.sleep(100);
@@ -45,7 +47,7 @@ public class Mirao52eDeformableMirrorDemo
 	 */
 	private double[] generateRandomVector(int pLength)
 	{
-		double[] lRawMirrorShapeVector = new double[pLength];
+		final double[] lRawMirrorShapeVector = new double[pLength];
 
 		final double lOffset = 0.01 * (2 * Math.random() - 1);
 		for (int i = 0; i < lRawMirrorShapeVector.length; i++)
