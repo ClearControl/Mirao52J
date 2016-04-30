@@ -126,16 +126,16 @@ if(hasProperty('bintray_user') && hasProperty('bintray_key') )
 		dryRun = false //Whether to run this as dry-run, without deploying
 		publish = true //If version should be auto published after an upload
 		pkg {
-			repo = 'Drivers'
-			userOrg = 'rtlib' //An optional organization name when the repo belongs to one of the user's orgs
+			repo = 'ClearControl'
+			userOrg = 'clearcontrol' //An optional organization name when the repo belongs to one of the user's orgs
 			name = project.name
 			desc = project.name
-			websiteUrl = 'https://github.com/RTlib/Mirao52J'
-			issueTrackerUrl = 'https://github.com/RTlib/Mirao52J/issues'
-			vcsUrl = 'https://github.com/RTlib/Mirao52J.git'
-			//licenses = ['Apache-2.0']
+			websiteUrl = 'https://github.com/ClearControl/Mirao52J'
+			issueTrackerUrl = 'https://github.com/ClearControl/Mirao52J/issues'
+			vcsUrl = 'https://github.com/ClearControl/Mirao52J.git'
+			licenses = ['GPL-3.0']
 			labels = [
-				'RTlib',
+				'ClearControl',
 				'Drivers',
 				'Devices',
 				'Hardware',
