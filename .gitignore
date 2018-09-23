@@ -7,3 +7,4 @@ old/
 *.class
 .DS_Store
 
+out
